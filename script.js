@@ -28,7 +28,9 @@ require(["esri/Map", "esri/views/MapView", "esri/request", "esri/layers/MapImage
   let options = {responseType: "json"};
         
   //Request json data specifying the url and options
-  Request(url, options).then((response) => {
+  Request(url, options).then(addMapServices)
+
+  function addMapServices (response) {
     generateBasemaps();
     let result = response.data;
     // Get services div created in HTML
@@ -43,68 +45,39 @@ require(["esri/Map", "esri/views/MapView", "esri/request", "esri/layers/MapImage
       // add options created to the select services div
       lstServices.appendChild(option);
     }
+  }
+
+  // Select services from dropdown and access layer when you choose service
+  lstServices.addEventListener("change", changeMapService);
+
+  function changeMapService() {
+        // Access services using the selectedIndex option of that service
+        let selectedService = lstServices[lstServices.selectedIndex].textContent;
+        // Create and access Map layer from services url using services name selected from dropdown
+        layer = new MapLayer({url: `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer`})
+        //Make sure any layer on map is removed to avoid multiple layers added from previous change event
+        map.removeAll();
+        // Add Layer to map
+        map.add(layer);
+              // When layer loads, go to full extent of the layer
+        layer.then(() => {
+          view.goTo(layer.fullExtent)
+  
+          // Get Table of Content Element
+          let toc = document.getElementById("toc");
+          toc.innerHTML = "";
+          let layerList = document.createElement("ul");
           
-    // Select services from dropdown and access layer when you choose service
-    lstServices.addEventListener("change", function () {
-      // Access services using the selectedIndex option of that service
-      let selectedService = lstServices[lstServices.selectedIndex].textContent;
-      // Create and access Map layer from services url using services name selected from dropdown
-      layer = new MapLayer({url: `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer`})
-      //Make sure any layer on map is removed to avoid multiple layers added from previous change event
-      map.removeAll();
-      // Add Layer to map
-      map.add(layer);
-            // When layer loads, go to full extent of the layer
-      layer.then(() => {
-        view.goTo(layer.fullExtent)
-
-        // Get Table of Content Element
-        let toc = document.getElementById("toc")
-              toc.innerHTML = "";
-        let layerList = document.createElement("ul");
-
-        // function layersContent(x) {
-
-        // //   if (x ===)
-        // // }
-        
-        for (i = 0; i < layer.sublayers.length; i++) {
-          let subLayer = layer.findSublayerById(i)
-
-          let layerItem = document.createElement("li");
-          let layerInput = document.createElement("input")
-          layerInput.setAttribute("type", "checkbox")
-          layerInput.setAttribute("id", subLayer.title)
-          layerInput.value = subLayer.id
-
-          let layerLabel = document.createElement("label")
-          layerLabel.textContent = subLayer.title
-          layerLabel.setAttribute("for", subLayer.title)
-          layerInput.checked = subLayer.visible;
+          addLayerToContent(layer, layerList)
+  
+        });
               
-          layerItem.append(layerInput)
-          layerItem.append(layerLabel)
-
-          layerList.append(layerItem)
-          toc.append(layerList)
-                
-          layerInput.addEventListener("change", (e) => {
-            let checkedLayer = layer.findSublayerById(Number(e.target.value))
-            checkedLayer.visible = e.target.checked;
-                    
-          })
-        } 
-
-      });
-            
-    });
-          
-  });
-        
+      }
+             
 });
 
 // Generate list of buttons to show various basemaps
-const generateBasemaps = () => {
+function generateBasemaps () {
   // Push basemaps to Array
   basemaps.push('satellite'); // Add satellite basemap
   basemaps.push('topo') // Add topo basemap
@@ -134,5 +107,34 @@ const generateBasemaps = () => {
     basemapBtn.addEventListener('click', setBasemap)
     // add basemap buttons to basemap button div created in HTML
     basemapBtns.append(basemapBtn)
+  }
+}
+
+function addLayerToContent (maplayer, layerList) {
+  for (i = 0; i < maplayer.sublayers.length; i++) {
+    let subLayer = maplayer.findSublayerById(i)
+
+    let layerItem = document.createElement("li");
+    let layerInput = document.createElement("input")
+    layerInput.setAttribute("type", "checkbox")
+    layerInput.setAttribute("id", subLayer.title)
+    layerInput.value = subLayer.id
+
+    let layerLabel = document.createElement("label")
+    layerLabel.textContent = subLayer.title
+    layerLabel.setAttribute("for", subLayer.title)
+    layerInput.checked = subLayer.visible;
+        
+    layerItem.append(layerInput)
+    layerItem.append(layerLabel)
+
+    layerList.append(layerItem)
+    toc.append(layerList)
+          
+    layerInput.addEventListener("change", (e) => {
+      let checkedLayer = maplayer.findSublayerById(Number(e.target.value))
+      checkedLayer.visible = e.target.checked;
+              
+    })
   }
 }
