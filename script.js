@@ -1,7 +1,6 @@
 // create global variables
 let view;
 let map;
-let mapLayer;
 let layer;
 let basemaps = []; //create empty basemap array
 
