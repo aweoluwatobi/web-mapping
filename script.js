@@ -12,7 +12,7 @@ require([
   "esri/request",
   "esri/layers/MapImageLayer",
   "esri/widgets/Legend",
-], function (Map, MapView, Request, MapLayer, Legend) {
+], function (Map, MapView, Request, MapImageLayer, Legend) {
   // create new map
   map = new Map({ basemap: "streets" });
   // create options for the map view
@@ -66,7 +66,7 @@ require([
     // Access services using the selectedIndex option of that service
     let selectedService = lstServices[lstServices.selectedIndex].textContent;
     // Create and access Map layer from services url using services name selected from dropdown
-    layer = new MapLayer({
+    layer = new MapImageLayer({
       url: `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer`,
     });
     //Make sure any layer on map is removed to avoid multiple layers added from previous change event
