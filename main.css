@@ -73,7 +73,7 @@ body {
 #basemap-btns button {
   display: inline-block;
   outline: 0;
-  margin-right: 10px;
+  margin: auto 10px 10px auto;
   padding: 3px 8px;
   border: 1px solid tranparent;
   font-size: 1.4rem;
