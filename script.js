@@ -80,6 +80,7 @@ require([
       let toc = document.getElementById("toc");
       toc.innerHTML = "";
       let layerList = document.createElement("ul");
+      toc.append(layerList);
 
       addLayerToContent(layer, layerList);
     });
@@ -120,30 +121,33 @@ function generateBasemaps() {
   }
 }
 
-function addLayerToContent(maplayer, layerList) {
-  for (i = 0; i < maplayer.sublayers.length; i++) {
-    let subLayer = maplayer.findSublayerById(i);
+function addLayerToContent(thisLayer, layerList) {
+  let layerInput = document.createElement("input");
+  layerInput.setAttribute("type", "checkbox");
+  layerInput.setAttribute("id", thisLayer.title);
+  layerInput.value = thisLayer.id;
 
-    let layerItem = document.createElement("li");
-    let layerInput = document.createElement("input");
-    layerInput.setAttribute("type", "checkbox");
-    layerInput.setAttribute("id", subLayer.title);
-    layerInput.value = subLayer.id;
+  layerInput.addEventListener("change", (e) => {
+    thisLayer.visible = e.target.checked;
+  });
 
-    let layerLabel = document.createElement("label");
-    layerLabel.textContent = subLayer.title;
-    layerLabel.setAttribute("for", subLayer.title);
-    layerInput.checked = subLayer.visible;
+  let layerLabel = document.createElement("label");
+  layerLabel.textContent = thisLayer.title;
+  layerLabel.setAttribute("for", thisLayer.title);
+  layerInput.checked = thisLayer.visible;
 
-    layerItem.append(layerInput);
-    layerItem.append(layerLabel);
+  let layerItem = document.createElement("li");
+  layerItem.appendChild(layerInput);
+  layerItem.appendChild(layerLabel);
 
-    layerList.append(layerItem);
-    toc.append(layerList);
+  layerList.appendChild(layerItem);
 
-    layerInput.addEventListener("change", (e) => {
-      let checkedLayer = maplayer.findSublayerById(Number(e.target.value));
-      checkedLayer.visible = e.target.checked;
-    });
+  if (thisLayer.sublayers != null && thisLayer.sublayers.items.length > 0) {
+    let newList = document.createElement("ul");
+    layerList.appendChild(newList);
+
+    for (let i = 0; i < thisLayer.sublayers.length; i++) {
+      addLayerToContent(thisLayer.sublayers.items[i], newList);
+    }
   }
 }
