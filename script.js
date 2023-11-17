@@ -90,15 +90,15 @@ require([
 function generateBasemaps() {
   // Push basemaps to Array
   basemaps.push("satellite"); // Add satellite basemap
+  basemaps.push("hybrid"); // Add hybrid basemap
   basemaps.push("topo"); // Add topo basemap
   basemaps.push("osm"); // Add osm basemap
-  basemaps.push("hybrid"); // Add hybrid basemap
+  basemaps.push("streets"); // Add streets basemap
+  basemaps.push("streets-night-vector"); // Add street-night-vector basemap
   basemaps.push("terrain"); // Add terrain basemap
+  basemaps.push("gray"); // add gray basemap
   basemaps.push("dark-gray"); // Add dark-gray basemap
-  basemaps.push("national-geographic"); // Add national-geographic basemap
   basemaps.push("oceans"); // Add oceans basemap
-  basemaps.push("gray");
-  basemaps.push("dark-gray");
 
   // set basemap to the text content of each target
   let setBasemap = (e) => (map.basemap = e.target.textContent);
