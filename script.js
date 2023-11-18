@@ -140,7 +140,9 @@ function addLayerToContent(thisLayer, layerList) {
   layerItem.appendChild(layerInput);
   layerItem.appendChild(layerLabel);
 
-  layerList.appendChild(layerItem);
+  if (thisLayer.sublayers == null) {
+    layerList.appendChild(layerItem);
+  }
 
   if (thisLayer.sublayers != null && thisLayer.sublayers.items.length > 0) {
     let newList = document.createElement("ul");
