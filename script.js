@@ -3,6 +3,8 @@ let view;
 let map;
 let layer;
 let basemaps = []; //create empty basemap array
+let request;
+let selectedService;
 
 // Connect to ESRI Javascript API and get necessary objects
 require([
@@ -11,8 +13,9 @@ require([
   "esri/request",
   "esri/layers/MapImageLayer",
   "esri/widgets/Legend",
-], function (Map, MapView, Request, MapImageLayer, Legend) {
+], function (Map, MapView, esriRequest, MapImageLayer, Legend) {
   // create new map
+  Request = esriRequest;
   map = new Map({ basemap: "streets" });
   // create options for the map view
   let viewOptions = {
@@ -63,7 +66,7 @@ require([
 
   function changeMapService() {
     // Access services using the selectedIndex option of that service
-    let selectedService = lstServices[lstServices.selectedIndex].textContent;
+    selectedService = lstServices[lstServices.selectedIndex].textContent;
     // Create and access Map layer from services url using services name selected from dropdown
     layer = new MapImageLayer({
       url: `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer`,
@@ -121,6 +124,22 @@ function generateBasemaps() {
   }
 }
 
+function getFeatureCount(layerid) {
+  let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${layerid}/query`;
+
+  let queryOptions = {
+    responseType: "json",
+    query: {
+      where: "1=1",
+      returnCountOnly: true,
+      f: "json",
+    },
+  };
+  Request(queryUrl, queryOptions).then((response) =>
+    alert(response.data.count)
+  );
+}
+
 function addLayerToContent(thisLayer, layerList) {
   let layerInput = document.createElement("input");
   layerInput.setAttribute("type", "checkbox");
@@ -136,9 +155,17 @@ function addLayerToContent(thisLayer, layerList) {
   layerLabel.setAttribute("for", thisLayer.title);
   layerInput.checked = thisLayer.visible;
 
+  let countBtn = document.createElement("button");
+  countBtn.textContent = "count";
+
+  countBtn.addEventListener("click", (e) => {
+    getFeatureCount(thisLayer.id);
+  });
+
   let layerItem = document.createElement("li");
   layerItem.appendChild(layerInput);
   layerItem.appendChild(layerLabel);
+  layerItem.appendChild(countBtn);
 
   if (thisLayer.sublayers == null) {
     layerList.appendChild(layerItem);
