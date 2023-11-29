@@ -124,7 +124,7 @@ function generateBasemaps() {
   }
 }
 
-function getFeatureCount(layerid) {
+function getFeatureCount(layerid, el) {
   let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${layerid}/query`;
 
   let queryOptions = {
@@ -135,8 +135,9 @@ function getFeatureCount(layerid) {
       f: "json",
     },
   };
-  Request(queryUrl, queryOptions).then((response) =>
-    alert(response.data.count)
+  Request(queryUrl, queryOptions).then(
+    (response) => (el.textContent = response.data.count),
+    (response) => (el.style.visibility = "hidden")
   );
 }
 
@@ -157,19 +158,22 @@ function addLayerToContent(thisLayer, layerList) {
 
   let countBtn = document.createElement("button");
   countBtn.textContent = "count";
+  getFeatureCount(thisLayer.id, countBtn);
 
-  countBtn.addEventListener("click", (e) => {
-    getFeatureCount(thisLayer.id);
-  });
+  // countBtn.addEventListener("click", (e) => {
+  //   getFeatureCount(thisLayer.id, countBtn);
+  // });
 
   let layerItem = document.createElement("li");
   layerItem.appendChild(layerInput);
   layerItem.appendChild(layerLabel);
   layerItem.appendChild(countBtn);
 
-  if (thisLayer.sublayers == null) {
-    layerList.appendChild(layerItem);
-  }
+  layerList.appendChild(layerItem);
+
+  // if (thisLayer.sublayers == null) {
+  //   layerList.appendChild(layerItem);
+  // }
 
   if (thisLayer.sublayers != null && thisLayer.sublayers.items.length > 0) {
     let newList = document.createElement("ul");
