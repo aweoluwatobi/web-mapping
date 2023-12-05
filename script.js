@@ -112,7 +112,7 @@ function generateBasemaps() {
     //Get basemap buttons div created in HTML
     let basemapBtns = document.getElementById("basemap-btns");
     // Create basemap button
-    let basemapBtn = document.createElement("button");
+    let basemapBtn = document.createElement("option");
     // Set basemap button ID
     basemapBtn.id = basemaps[i];
     // Set basemap button text content
