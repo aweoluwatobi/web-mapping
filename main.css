@@ -1,6 +1,8 @@
 @font-face {
   font-family: "Avenir Next W00";
-  src: url('Font/avenir-next/AvenirNextLTPro-It.otf'), url('Font/avenir-next/AvenirNextLTPro-Bold.otf'), url('Font/avenir-next/AvenirNextLTPro-It.otf')
+  src: url("Font/avenir-next/AvenirNextLTPro-It.otf"),
+    url("Font/avenir-next/AvenirNextLTPro-Bold.otf"),
+    url("Font/avenir-next/AvenirNextLTPro-It.otf");
 }
 
 * {
@@ -19,7 +21,6 @@ body {
   color: #555;
   font-weight: 400;
   background-color: #fff;
-  
 }
 
 .grid-container {
@@ -27,7 +28,6 @@ body {
   grid-template-columns: 150px 500px;
   row-gap: 10px;
   padding: 10px 0 0 10px;
-  
 }
 
 #lstServices {
@@ -47,7 +47,7 @@ body {
 }
 
 #mapview {
-  height:500px;
+  height: 500px;
   width: 700px;
   grid-column: 2;
   grid-row: 2 / 3;
@@ -65,33 +65,9 @@ body {
   margin-right: 5px;
 }
 
-#basemap-btns {
+#basemap-list {
   grid-column: 1 / 2;
   grid-row: 1;
   width: 13rem;
-}
-
-#basemap-btns button {
-  display: inline-block;
-  outline: 0;
-  margin: auto 10px 10px auto;
-  padding: 3px 8px;
-  border: 1px solid transparent;
   font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.5;
-  text-align: center;
-  cursor: pointer;
-  color: #555;
-  border-color: #aaa;
-  background-color: transparent;
-  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  border-radius: .5rem;
 }
-
-#basemap-btns button:hover {
-  color: #fff;
-  background-color: #555;
-  border-color: #aaa;
-}
-
