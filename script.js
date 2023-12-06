@@ -105,22 +105,26 @@ function generateBasemaps() {
   basemaps.push("oceans"); // Add oceans basemap
 
   // set basemap to the text content of each target
-  let setBasemap = (e) => (map.basemap = e.target.textContent);
+  let setBasemap = (e) =>
+    (map.basemap = e.target[e.target.selectedIndex].textContent);
+
+  //Get basemap buttons div created in HTML
+  let basemapLists = document.getElementById("basemap-list");
+
+  // add event listener on click to set basemap
+  basemapLists.addEventListener("change", setBasemap);
 
   // create basemap buttons
   for (let i = 0; i < basemaps.length; i++) {
-    //Get basemap buttons div created in HTML
-    let basemapBtns = document.getElementById("basemap-btns");
     // Create basemap button
-    let basemapBtn = document.createElement("option");
+    let basemap = document.createElement("option");
     // Set basemap button ID
-    basemapBtn.id = basemaps[i];
+    basemap.id = basemaps[i];
     // Set basemap button text content
-    basemapBtn.textContent = basemaps[i];
-    // add event listener on click to set basemap
-    basemapBtn.addEventListener("click", setBasemap);
+    basemap.textContent = basemaps[i];
+
     // add basemap buttons to basemap button div created in HTML
-    basemapBtns.append(basemapBtn);
+    basemapLists.append(basemap);
   }
 }
 
