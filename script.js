@@ -5,6 +5,7 @@ let layer;
 let basemaps = []; //create empty basemap array
 let request;
 let selectedService;
+const DEFAULT_BASEMAP = "streets";
 
 // Connect to ESRI Javascript API and get necessary objects
 require([
@@ -16,7 +17,7 @@ require([
 ], function (Map, MapView, esriRequest, MapImageLayer, Legend) {
   // create new map
   Request = esriRequest;
-  map = new Map({ basemap: "streets" });
+  map = new Map({ basemap: DEFAULT_BASEMAP });
   // create options for the map view
   let viewOptions = {
     container: "mapview",
@@ -120,8 +121,13 @@ function generateBasemaps() {
     let basemap = document.createElement("option");
     // Set basemap button ID
     basemap.id = basemaps[i];
+
     // Set basemap button text content
     basemap.textContent = basemaps[i];
+
+    if (basemaps[i] == DEFAULT_BASEMAP) {
+      basemap.selected = true;
+    }
 
     // add basemap buttons to basemap button div created in HTML
     basemapLists.append(basemap);
