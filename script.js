@@ -174,9 +174,9 @@ function addLayerToContent(thisLayer, layerList) {
   countBtn.textContent = "count";
   getFeatureCount(thisLayer.id, countBtn);
 
-  // countBtn.addEventListener("click", (e) => {
-  //   getFeatureCount(thisLayer.id, countBtn);
-  // });
+  // on click, open the attribute table
+  countBtn.layerid = thisLayer.id;
+  countBtn.addEventListener("click", populateAttrsTable);
 
   let layerItem = document.createElement("li");
   layerItem.appendChild(layerInput);
@@ -197,4 +197,9 @@ function addLayerToContent(thisLayer, layerList) {
       addLayerToContent(thisLayer.sublayers.items[i], newList);
     }
   }
+}
+
+// Show table showing information of features in a  particular layer
+function populateAttrsTable(e) {
+  alert("This is an attribute table for " + e.target.layerid);
 }
