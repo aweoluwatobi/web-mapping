@@ -14,7 +14,8 @@ require([
   "esri/request",
   "esri/layers/MapImageLayer",
   "esri/widgets/Legend",
-], function (Map, MapView, esriRequest, MapImageLayer, Legend) {
+  "esri/widgets/Search",
+], function (Map, MapView, esriRequest, MapImageLayer, Legend, Search) {
   // create new map
   Request = esriRequest;
   map = new Map({ basemap: DEFAULT_BASEMAP });
@@ -29,8 +30,11 @@ require([
   view = new MapView(viewOptions);
   // create legend after view loads
   view.when(() => {
-    let legend = new Legend({ view: view });
+    const legend = new Legend({ view: view });
     view.ui.add(legend, "bottom-left");
+
+    const searchWidget = new Search({ view: view });
+    view.ui.add(searchWidget, "top-right");
   });
 
   // Connect to ArcGIS Server sample URL
