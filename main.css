@@ -30,7 +30,7 @@ html,body {
 .grid-container {
   height: 100%;
   display: grid;
-  grid-template-columns: 20% 1fr;
+  grid-template-columns: 350px 1fr;
   grid-template-rows: auto 1fr;
   row-gap: 10px;
   padding: 10px 0 0 10px;
@@ -47,7 +47,7 @@ html,body {
 
 #toc {
   grid-column: 1;
-  grid-row: 2 / 3;
+  grid-row: 2 / 4;
   padding: 20px 20px 0 10px;
   border: 1px solid #aaa;
 }
@@ -57,6 +57,12 @@ html,body {
   grid-row: 2 / 3;
   border: 1px solid #aaa;
   border-left: 0;
+}
+
+#attribute-table {
+  grid-column: 2/3;
+  grid-row: 3/4;
+  
 }
 
 #toc ul {
@@ -85,6 +91,21 @@ html,body {
   font-family: inherit;
   font-size: 1.4rem;
 }
+
+table {
+  font-size: 1.4rem;
+  border-collapse: collapse;
+}
+
+table, tr {
+  width: 100%;
+  font-family: inherit;
+}
+
+table, th, td {
+  border: 1px solid #aaa; 
+}
+
 
 /*
 #basemap-btns button {
