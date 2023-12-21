@@ -201,5 +201,65 @@ function addLayerToContent(thisLayer, layerList) {
 
 // Show table showing information of features in a  particular layer
 function populateAttrsTable(e) {
-  alert("This is an attribute table for " + e.target.layerid);
+  // alert("This is an attribute table for " + e.target.layerid);
+
+  const ATTR_TABLE = document.getElementById("attribute-table");
+
+  ATTR_TABLE.innerHTML = "";
+
+  let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${e.target.layerid}/query`;
+
+  let queryOptions = {
+    responseType: "json",
+    query: {
+      where: "1=1",
+      returnCountOnly: false,
+      f: "json",
+      outFields: "*",
+      resultRecordCount: 10,
+    },
+  };
+  Request(queryUrl, queryOptions).then((response) => {
+    // alert(response.data.fields.length);
+
+    let table = document.createElement("table");
+    let tableHeader = document.createElement("tr");
+    let tableRow = document.createElement("tr");
+
+    table.appendChild(tableHeader);
+    table.appendChild(tableRow);
+
+    for (let i = 0; i < response.data.fields.length; i++) {
+      // alert(response.data.fields[i].alias);
+      let fieldName = document.createElement("th");
+      fieldName.textContent = response.data.fields[i].alias;
+
+      tableHeader.appendChild(fieldName);
+    }
+
+    for (let i = 0; i < response.data.features.length; i++) {
+      let ref = response.data.features[i].attributes;
+      Object.entries(ref).forEach(([key, value]) => {
+        let features = document.createElement("td");
+        features.textContent = value;
+
+        tableRow.appendChild(features);
+      });
+
+      // for (let key in ref) {
+      //   if (ref.hasOwnProperty(key)) {
+      //     let features = document.createElement("td");
+      //     features.textContent = ref[key];
+
+      //     tableRow.appendChild(features);
+      //   }
+      // }
+
+      // features.textContent = response.data.features[i].attributes.objectid;
+
+      // table.appendChild(tableRow);
+    }
+
+    ATTR_TABLE.appendChild(table);
+  });
 }
