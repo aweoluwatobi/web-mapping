@@ -201,14 +201,15 @@ function addLayerToContent(thisLayer, layerList) {
 
 // Show table showing information of features in a  particular layer
 function populateAttrsTable(e) {
-  // alert("This is an attribute table for " + e.target.layerid);
-
+  //fetch Attribute table HTML Element
   const ATTR_TABLE = document.getElementById("attribute-table");
-
+  // rest innerHTML when function is called
   ATTR_TABLE.innerHTML = "";
 
+  //access query url
   let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${e.target.layerid}/query`;
 
+  //set query options
   let queryOptions = {
     responseType: "json",
     query: {
@@ -219,47 +220,51 @@ function populateAttrsTable(e) {
       resultRecordCount: 10,
     },
   };
+
+  // request esri map service and get response
   Request(queryUrl, queryOptions).then((response) => {
     // alert(response.data.fields.length);
 
+    // create table elements
     let table = document.createElement("table");
     let tableHeader = document.createElement("tr");
-    let tableRow = document.createElement("tr");
 
+    // append header to table
     table.appendChild(tableHeader);
-    table.appendChild(tableRow);
 
+    // fetch response to populate table header
     for (let i = 0; i < response.data.fields.length; i++) {
-      // alert(response.data.fields[i].alias);
+      // create table header and add text content
       let fieldName = document.createElement("th");
       fieldName.textContent = response.data.fields[i].alias;
 
+      //append to table header
       tableHeader.appendChild(fieldName);
     }
 
+    // fetch response to populate field values
     for (let i = 0; i < response.data.features.length; i++) {
-      let ref = response.data.features[i].attributes;
-      Object.entries(ref).forEach(([key, value]) => {
+      // create new table rows
+      let tableBody = document.createElement("tr");
+
+      // store feature attributes object in variable
+      let attributes = response.data.features[i].attributes;
+
+      // Loop through each object and get the attributes
+      Object.values(attributes).forEach((value) => {
+        //create table data and store attribute as text content
         let features = document.createElement("td");
         features.textContent = value;
 
-        tableRow.appendChild(features);
+        //append table data (td) to table
+        tableBody.appendChild(features);
       });
 
-      // for (let key in ref) {
-      //   if (ref.hasOwnProperty(key)) {
-      //     let features = document.createElement("td");
-      //     features.textContent = ref[key];
-
-      //     tableRow.appendChild(features);
-      //   }
-      // }
-
-      // features.textContent = response.data.features[i].attributes.objectid;
-
-      // table.appendChild(tableRow);
+      // append each table row (tr) to the table
+      table.appendChild(tableBody);
     }
 
+    // Add table to HTML Attribute table element
     ATTR_TABLE.appendChild(table);
   });
 }
