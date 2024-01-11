@@ -6,6 +6,7 @@ let basemaps = []; //create empty basemap array
 let request;
 let selectedService;
 const DEFAULT_BASEMAP = "streets";
+const DEFAULT_MAP_SERVICE = "Water_Network";
 
 // Connect to ESRI Javascript API and get necessary objects
 require([
@@ -63,15 +64,21 @@ require([
       option.textContent = result.services[i].name;
       // add options created to the select services div
       lstServices.appendChild(option);
+
+      if (DEFAULT_MAP_SERVICE == option.textContent) {
+        option.selected = true;
+      }
     }
+    changeMapService();
   }
 
   // Select services from dropdown and access layer when you choose service
   lstServices.addEventListener("change", changeMapService);
 
   function changeMapService() {
-    // Access services using the selectedIndex option of that service
+    //Access services using the selectedIndex option of that service
     selectedService = lstServices[lstServices.selectedIndex].textContent;
+
     // Create and access Map layer from services url using services name selected from dropdown
     layer = new MapImageLayer({
       url: `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer`,
