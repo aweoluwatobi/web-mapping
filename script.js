@@ -178,6 +178,7 @@ function addLayerToContent(thisLayer, layerList) {
   layerInput.checked = thisLayer.visible;
 
   let countBtn = document.createElement("button");
+  countBtn.setAttribute("id", thisLayer.id);
   countBtn.textContent = "count";
   getFeatureCount(thisLayer.id, countBtn);
 
@@ -210,6 +211,10 @@ function addLayerToContent(thisLayer, layerList) {
 function populateAttrsTable(e) {
   //fetch Attribute table HTML Element
   const ATTR_TABLE = document.getElementById("attribute-table");
+
+  ATTR_TABLE.toggleAttribute("hidden");
+
+  // ATTR_TABLE.style.display = "block";
   // rest innerHTML when function is called
   ATTR_TABLE.innerHTML = "";
 
@@ -251,24 +256,30 @@ function populateAttrsTable(e) {
 
     // fetch response to populate field values
     for (let i = 0; i < response.data.features.length; i++) {
+      let feature = response.data.features[i];
       // create new table rows
       let tableBody = document.createElement("tr");
 
       // store feature attributes object in variable
       let attributes = response.data.features[i].attributes;
 
-      // Loop through each object and get the attributes
-      Object.values(attributes).forEach((value) => {
-        //create table data and store attribute as text content
+      // Loop through each feature to get the attributes
+      for (let j = 0; j < response.data.fields.length; j++) {
+        let field = response.data.fields[j];
         let features = document.createElement("td");
-        features.textContent = value;
+        features.textContent = feature.attributes[field.name];
 
-        //append table data (td) to table
+        // change epoch date to normal date
+        if (field.type == "esriFieldTypeDate") {
+          features.textContent = new Date(feature.attributes[field.name]);
+        }
+
+        // append table data to table row
         tableBody.appendChild(features);
-      });
 
-      // append each table row (tr) to the table
-      table.appendChild(tableBody);
+        // append each table row (tr) to the table
+        table.appendChild(tableBody);
+      }
     }
 
     // Add table to HTML Attribute table element
