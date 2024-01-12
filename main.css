@@ -92,6 +92,10 @@ html,body {
   font-size: 1.4rem;
 }
 
+#attribute-table {
+  height: 200px;
+}
+
 table {
   font-size: 1.4rem;
   border-collapse: collapse;
