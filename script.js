@@ -40,42 +40,44 @@ require([
 
   // Connect to ArcGIS Server sample URL
   // let url = 'https://server.arcgisonline.com/arcgis/rest/services/reference?f=json'
+  addMapServices();
 
-  let url =
-    "https://sampleserver6.arcgisonline.com/arcgis/rest/services?f=json";
-
-  // Set request option to indicate json as response type
-  let options = { responseType: "json" };
-
-  //Request json data specifying the url and options
-  Request(url, options).then(addMapServices);
-
-  function addMapServices(response) {
+  function addMapServices() {
     generateBasemaps();
-    let result = response.data;
-    // Get services div created in HTML
-    let lstServices = document.getElementById("lstServices");
 
-    // Add services to a select dropdown list
-    for (let i = 0; i < result.services.length; i++) {
-      // Create options
-      let option = document.createElement("option");
-      // Set options text content to the name of services
-      option.textContent = result.services[i].name;
-      // add options created to the select services div
-      lstServices.appendChild(option);
+    let url =
+      "https://sampleserver6.arcgisonline.com/arcgis/rest/services?f=json";
 
-      if (DEFAULT_MAP_SERVICE == option.textContent) {
-        option.selected = true;
+    // Set request option to indicate json as response type
+    let options = { responseType: "json" };
+
+    //Request json data specifying the url and options
+    Request(url, options).then((response) => {
+      let result = response.data;
+      // Get services div created in HTML
+      let lstServices = document.getElementById("lstServices");
+
+      // Add services to a select dropdown list
+      for (let i = 0; i < result.services.length; i++) {
+        // Create options
+        let option = document.createElement("option");
+        // Set options text content to the name of services
+        option.textContent = result.services[i].name;
+        // add options created to the select services div
+        lstServices.appendChild(option);
+
+        if (DEFAULT_MAP_SERVICE == option.textContent) {
+          option.selected = true;
+        }
       }
-    }
-    changeMapService();
+      selectMapService();
+
+      // Select services from dropdown and access layer when you choose service
+      lstServices.addEventListener("change", selectMapService);
+    });
   }
 
-  // Select services from dropdown and access layer when you choose service
-  lstServices.addEventListener("change", changeMapService);
-
-  function changeMapService() {
+  function selectMapService() {
     //Access services using the selectedIndex option of that service
     selectedService = lstServices[lstServices.selectedIndex].textContent;
 
@@ -88,19 +90,21 @@ require([
     // Add Layer to map
     map.add(layer);
     // When layer loads, go to full extent of the layer
-    layer.when(() => {
-      view.goTo(layer.fullExtent);
-
-      // Get Table of Content Element
-      let toc = document.getElementById("toc");
-      toc.innerHTML = "";
-      let layerList = document.createElement("ul");
-      toc.append(layerList);
-
-      addLayerToContent(layer, layerList);
-    });
+    layer.when(createToc);
   }
 });
+
+function createToc() {
+  view.goTo(layer.fullExtent);
+
+  // Get Table of Content Element
+  let toc = document.getElementById("toc");
+  toc.innerHTML = "";
+  let layerList = document.createElement("ul");
+  toc.append(layerList);
+
+  addLayerToToc(layer, layerList);
+}
 
 // Generate list of buttons to show various basemaps
 function generateBasemaps() {
@@ -162,7 +166,7 @@ function getFeatureCount(layerid, el) {
   );
 }
 
-function addLayerToContent(thisLayer, layerList) {
+function addLayerToToc(thisLayer, layerList) {
   let layerInput = document.createElement("input");
   layerInput.setAttribute("type", "checkbox");
   layerInput.setAttribute("id", thisLayer.title);
@@ -202,7 +206,7 @@ function addLayerToContent(thisLayer, layerList) {
     layerList.appendChild(newList);
 
     for (let i = 0; i < thisLayer.sublayers.length; i++) {
-      addLayerToContent(thisLayer.sublayers.items[i], newList);
+      addLayerToToc(thisLayer.sublayers.items[i], newList);
     }
   }
 }
