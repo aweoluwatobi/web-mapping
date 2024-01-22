@@ -7,6 +7,7 @@ let request;
 let selectedService;
 const DEFAULT_BASEMAP = "streets";
 const DEFAULT_MAP_SERVICE = "Water_Network";
+const DEFAULT_PAGE_SIZE = 5;
 
 // Connect to ESRI Javascript API and get necessary objects
 require([
@@ -149,7 +150,7 @@ function generateBasemaps() {
   }
 }
 
-function getFeatureCount(layerid, el) {
+function getFeatureCount(layerid, featureCount) {
   let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${layerid}/query`;
 
   let queryOptions = {
@@ -161,8 +162,8 @@ function getFeatureCount(layerid, el) {
     },
   };
   Request(queryUrl, queryOptions).then(
-    (response) => (el.textContent = response.data.count),
-    (response) => (el.style.visibility = "hidden")
+    (response) => featureCount(response.data.count),
+    (response) => featureCount(0)
   );
 }
 
@@ -177,18 +178,18 @@ function addLayerToToc(thisLayer, layerList) {
   });
 
   let layerLabel = document.createElement("label");
-  layerLabel.textContent = thisLayer.title;
+  layerLabel.textContent = thisLayer.title + " ";
   layerLabel.setAttribute("for", thisLayer.title);
   layerInput.checked = thisLayer.visible;
 
   let countBtn = document.createElement("button");
   countBtn.setAttribute("id", thisLayer.id);
-  countBtn.textContent = "count";
-  getFeatureCount(thisLayer.id, countBtn);
+  countBtn.textContent = "view";
+  // getFeatureCount(thisLayer.id, countBtn);
 
   // on click, open the attribute table
   countBtn.layerid = thisLayer.id;
-  countBtn.addEventListener("click", populateAttrsTable);
+  countBtn.addEventListener("click", openAttrTable);
 
   let layerItem = document.createElement("li");
   layerItem.appendChild(layerInput);
@@ -197,7 +198,7 @@ function addLayerToToc(thisLayer, layerList) {
 
   layerList.appendChild(layerItem);
 
-  // if (thisLayer.sublayers == null) {
+  // if (thisLayer.sublayers.null) {
   //   layerList.appendChild(layerItem);
   // }
 
@@ -211,19 +212,33 @@ function addLayerToToc(thisLayer, layerList) {
   }
 }
 
+function openAttrTable(e) {
+  let layerid = e.target.layerid;
+
+  let featureCount = 0;
+
+  getFeatureCount(layerid, (count) => {
+    featureCount = count;
+    populateAttrsTable(layerid, featureCount);
+  });
+}
+
 // Show table showing information of features in a  particular layer
-function populateAttrsTable(e) {
+function populateAttrsTable(layerid, featureCount) {
+  alert(featureCount);
   //fetch Attribute table HTML Element
   const ATTR_TABLE = document.getElementById("attribute-table");
 
-  ATTR_TABLE.toggleAttribute("hidden");
+  // ATTR_TABLE.toggleAttribute("hidden");
 
-  // ATTR_TABLE.style.display = "block";
+  // Show attribute table
+  ATTR_TABLE.style.display = "block";
+
   // rest innerHTML when function is called
   ATTR_TABLE.innerHTML = "";
 
   //access query url
-  let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${e.target.layerid}/query`;
+  let queryUrl = `https://sampleserver6.arcgisonline.com/arcgis/rest/services/${selectedService}/MapServer/${layerid}/query`;
 
   //set query options
   let queryOptions = {
@@ -233,7 +248,7 @@ function populateAttrsTable(e) {
       returnCountOnly: false,
       f: "json",
       outFields: "*",
-      resultRecordCount: 10,
+      resultRecordCount: DEFAULT_PAGE_SIZE,
     },
   };
 
@@ -263,9 +278,6 @@ function populateAttrsTable(e) {
       let feature = response.data.features[i];
       // create new table rows
       let tableBody = document.createElement("tr");
-
-      // store feature attributes object in variable
-      let attributes = response.data.features[i].attributes;
 
       // Loop through each feature to get the attributes
       for (let j = 0; j < response.data.fields.length; j++) {
