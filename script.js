@@ -223,8 +223,24 @@ function openAttrTable(e) {
   });
 }
 
+function pageNumbering(featureCount) {
+  pageCount = featureCount / DEFAULT_PAGE_SIZE;
+  let attrTablePages = document.getElementById("attr-pages");
+  attrTablePages.innerHTML = "";
+
+  for (let i = 0; i < pageCount; i++) {
+    let pageBtn = document.createElement("button");
+    pageBtn.textContent = i + 1;
+
+    attrTablePages.appendChild(pageBtn);
+  }
+
+  // alert(`page count: ${Math.ceil(pageCount)}`);
+}
+
 // Show table showing information of features in a  particular layer
 function populateAttrsTable(layerid, featureCount) {
+  pageNumbering(featureCount);
   alert(featureCount);
   //fetch Attribute table HTML Element
   const ATTR_TABLE = document.getElementById("attribute-table");
